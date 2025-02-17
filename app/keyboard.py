@@ -4,7 +4,7 @@ from aiogram import types
 def start_keyboard():
     kb = [
         [types.KeyboardButton(text="Начать тренировку!")],
-        [types.KeyboardButton(text="Рейтинг")]
+        [types.KeyboardButton(text="Рейтинг"), types.KeyboardButton(text="Лидеры")]
     ]
     start = types.ReplyKeyboardMarkup(
         keyboard=kb,
@@ -16,7 +16,7 @@ def start_keyboard():
 def end_keyboard():
     kb = [
         [types.KeyboardButton(text="Закончить тренировку")],
-        [types.KeyboardButton(text="Рейтинг")]
+        [types.KeyboardButton(text="Рейтинг"), types.KeyboardButton(text="Лидеры")]
     ]
     end = types.ReplyKeyboardMarkup(
         keyboard=kb,

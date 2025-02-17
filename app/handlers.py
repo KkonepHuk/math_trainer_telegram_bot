@@ -12,7 +12,7 @@ router = Router()
 async def cmd_start(message: types.Message):
 
     global raiting
-    raiting = raiting_module.new_user_raiting(str(message.from_user.id))
+    raiting = raiting_module.new_user_raiting(str(message.from_user.id), message.from_user.full_name)
 
     keyboard = start_keyboard()
     await message.answer(f'Добро пожаловать в <b>MATH TRAINER</b>, {message.from_user.first_name}!\nНачните тренировать свои математические навыки, нажав на кнопку!',
@@ -28,7 +28,7 @@ async def start_training(message: types.Message):
     keyboard = answers_keyboard(answers, answer)
 
     global raiting
-    raiting = raiting_module.new_user_raiting(str(message.from_user.id))
+    raiting = raiting_module.new_user_raiting(str(message.from_user.id), message.from_user.full_name)
 
     await message.answer('Вы начали тренировку.\nДля её завершения не забудьте воспользоваться кнопкой "Закончить тренировку"!\nВы также можете нажать "Рейтинг", чтобы следить за своими успехами.', reply_markup=end_keyboard())
     await message.answer(f'Решите пример:\n<b>{task}</b>', parse_mode='HTML', reply_markup=keyboard.as_markup())
@@ -44,16 +44,19 @@ async def end_training(message: types.Message):
 
 @router.message(F.text == 'Рейтинг')
 async def end_training(message: types.Message):
-
+    global raiting
     try:
-        global raiting
         raiting.to_json()
         await message.answer(f'Ваш текущий рейтинг: {raiting}')
     except:
-        raiting = raiting_module.new_user_raiting(str(message.from_user.id))
+        raiting = raiting_module.new_user_raiting(str(message.from_user.id), message.from_user.full_name)
         
         raiting.to_json()
         await message.answer(f'Ваш текущий рейтинг: {raiting}')
+
+@router.message(F.text == 'Лидеры')
+async def leaderboard(message: types.Message):
+    await message.answer(f'<b>Наша гордость:</b>\n{raiting_module.show_leaderboard()}', parse_mode='HTML')
 
 
 @router.callback_query(F.data == 'correct')
@@ -77,6 +80,7 @@ async def incorrect_answer(callback: types.CallbackQuery):
     raiting.decrease_raiting(25)
 
     await callback.message.answer(f'Решите пример:\n<b>{task}</b>', parse_mode='HTML', reply_markup=keyboard.as_markup())
+
 
 
 
