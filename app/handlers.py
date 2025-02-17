@@ -56,8 +56,10 @@ async def end_training(message: types.Message):
 
 @router.message(F.text == 'Лидеры')
 async def leaderboard(message: types.Message):
-    await message.answer(f'<b>Наша гордость:</b>\n{raiting_module.show_leaderboard()}', parse_mode='HTML')
-
+    try:
+        raiting.to_json()
+    finally:
+        await message.answer(f'<b>Наша гордость:</b>\n{raiting_module.show_leaderboard()}', parse_mode='HTML')
 
 @router.callback_query(F.data == 'correct')
 async def correct_answer(callback: types.CallbackQuery):
